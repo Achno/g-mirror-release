@@ -110,7 +110,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: gowall-${{env.GOARCH}}-${{env.GOOS}}
-          path: gowall-${{ matrix.arch }}-${{ matrix.os }}.zip
+          path: gowall
 
   release:
     needs: build
