@@ -11,6 +11,9 @@ jobs:
       matrix:
         arch: [amd64, arm64]
         os: [windows, darwin, linux]
+        exclude:
+          - arch: arm64
+            os: linux  # Remove arm64-linux has issues with gofitz
       fail-fast: false
     runs-on: ${{ fromJson('{"windows":"windows-latest","darwin":"macos-latest","linux":"ubuntu-latest"}')[matrix.os] }}
     env:
@@ -35,7 +38,7 @@ jobs:
 
       - name: Build Binary With Zig (for linux or windows on arm64)
         shell: bash
-        if: ${{ matrix.arch == 'arm64' && (matrix.os == 'windows') }}
+        if: ${{ matrix.arch == 'arm64' && (matrix.os == 'linux' || matrix.os == 'windows') }}
         run: |
           CC="zig cc -target ${{ env.ZIG_ARCH }}-${{ env.ZIG_OS }}" \
           go build -ldflags="-s -w" -o gowall-${{env.GOARCH}}-${{env.GOOS}}
