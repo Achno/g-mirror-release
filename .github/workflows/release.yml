@@ -51,5 +51,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: gowall-${{env.GOARCH}}-${{env.GOOS}}
-          path: gowall-${{env.GOARCH}}-${{env.GOOS}}
+          path: gowall
           
