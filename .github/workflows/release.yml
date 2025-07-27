@@ -35,7 +35,7 @@ jobs:
 
       - name: Build Binary With Zig (for linux or windows on arm64)
         shell: bash
-        if: ${{ matrix.arch == 'arm64' && (matrix.os == 'linux' || matrix.os == 'windows') }}
+        if: ${{ matrix.arch == 'arm64' && (matrix.os == 'windows') }}
         run: |
           CC="zig cc -target ${{ env.ZIG_ARCH }}-${{ env.ZIG_OS }}" \
           go build -ldflags="-s -w" -o gowall-${{env.GOARCH}}-${{env.GOOS}}
