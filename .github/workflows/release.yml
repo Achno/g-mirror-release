@@ -41,12 +41,12 @@ jobs:
         if: ${{ matrix.arch == 'arm64' && (matrix.os == 'linux' || matrix.os == 'windows') }}
         run: |
           CC="zig cc -target ${{ env.ZIG_ARCH }}-${{ env.ZIG_OS }}" \
-          go build -ldflags="-s -w" -o gowall-${{env.GOARCH}}-${{env.GOOS}}
+          go build -ldflags="-s -w" -o gowall
       - name: Build Binary Without Zig (for other targets)
         shell: bash
         if: ${{ matrix.arch == 'amd64' || (matrix.arch =='arm64' && matrix.os == 'darwin') }}
         run: |
-          go build -ldflags="-s -w" -o gowall-${{env.GOARCH}}-${{env.GOOS}}
+          go build -ldflags="-s -w" -o gowall
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
