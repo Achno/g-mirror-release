@@ -42,28 +42,19 @@ jobs:
         if: ${{ matrix.arch == 'arm64' && (matrix.os == 'linux' || matrix.os == 'windows') }}
         run: |
           CC="zig cc -target ${{ env.ZIG_ARCH }}-${{ env.ZIG_OS }}" \
-          go build -ldflags="-s -w" -o gowall${{ matrix.os == 'windows' && '.exe' || '' }}
+          go build -ldflags="-s -w" -o gowall
           
       - name: Build Binary Without Zig (for other targets)
         shell: bash
         if: ${{ matrix.arch == 'amd64' || (matrix.arch =='arm64' && matrix.os == 'darwin') }}
         run: |
-          go build -ldflags="-s -w" -o gowall${{ matrix.os == 'windows' && '.exe' || '' }}
-          
-      - name: Create zip archive
-        shell: bash
-        run: |
-          if [ "${{ matrix.os }}" = "windows" ]; then
-            zip gowall-${{ matrix.arch }}-${{ matrix.os }}.zip gowall.exe
-          else
-            zip gowall-${{ matrix.arch }}-${{ matrix.os }}.zip gowall
-          fi
+          go build -ldflags="-s -w" -o gowall
           
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: gowall-${{env.GOARCH}}-${{env.GOOS}}
-          path: gowall-${{ matrix.arch }}-${{ matrix.os }}.zip
+          path: gowall
 
   release:
     needs: build
@@ -91,19 +82,17 @@ jobs:
           draft: false
           prerelease: false
           
-      - name: Create zip files and upload
+      - name: Upload Release Assets
         shell: bash
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           for dir in ./artifacts/*/; do
-            if [ -d "$dir" ]; then
-              for file in "$dir"*.zip; do
-                if [ -f "$file" ]; then
-                  filename=$(basename "$file")
-                  echo "Uploading $filename"
-                  gh release upload ${{ github.ref_name }} "$file" --clobber
-                fi
-              done
-            fi
+            for file in "$dir"*; do
+              if [ -f "$file" ]; then
+                filename=$(basename "$file")
+                echo "Uploading $filename"
+                gh release upload ${{ github.ref_name }} "$file" --clobber
+              fi
+            done
           done
